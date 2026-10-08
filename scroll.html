@@ -34,13 +34,13 @@
     .chapters a{margin-top:16px;color:#27241f;font:10px "DM Mono",monospace;letter-spacing:.12em;text-transform:uppercase;border-bottom:1px solid #27241f;padding:12px 0}
     .topbar nav a:focus-visible,.topbar a:focus-visible,.chapters a:focus-visible{outline:2px solid #edaa6b;outline-offset:5px}
     @media(max-width:650px){.journey{height:400vh}.hud{padding:16vh 24px 9vh}.hud h1{font-size:clamp(59px,14vw,78px)}.hud p{max-width:310px;font-size:14px}.counter,.cue{bottom:25px;font-size:8px}.chapters article{min-height:60vh}.chapters article:nth-child(even){text-align:left;align-items:flex-start}}
-    @media(prefers-reduced-motion:reduce){.journey{height:100svh}.sticky{height:100svh;position:relative}.visual video{display:none}.progress{display:none}.cue{display:none}.chapters article{min-height:55vh}}
+    @media(prefers-reduced-motion:reduce){.journey{height:auto}.sticky{height:100svh;position:relative}.visual video{display:none}.progress{display:none}.cue{display:none}.chapters{display:block;background:#f5f0e7;color:#27241f;padding:5vh var(--gutter) 9vh}.chapters article{min-height:0;padding:9vh 0}}
   </style>
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="index.html">miga<span>✳</span></a>
-    <nav><a href="#chapters">Capítulos</a></nav>
+    <nav aria-label="Navegação da experiência"><a href="index.html#case">Sobre o conceito</a></nav>
     <a class="order" href="index.html">Voltar à Miga ↗</a>
   </header>
   <main>
@@ -48,14 +48,14 @@
       <div class="sticky">
         <div class="progress" id="progress"></div>
         <div class="visual" aria-hidden="true">
-          <video id="storyVideo" muted playsinline preload="auto" poster="hero-still.png">
+          <video id="storyVideo" muted playsinline preload="metadata" poster="hero-still.png" aria-hidden="true">
             <source src="media/miga-story.mp4" type="video/mp4" />
           </video>
         </div>
         <div class="hud">
           <small id="kicker">01 / CAPÍTULO</small>
-          <h1 id="title">A manhã começa<br /><em>devagar.</em></h1>
-          <p id="copy">A primeira luz encontra o pão que descansou a noite inteira.</p>
+          <h1 id="title" aria-live="polite">A manhã começa<br /><em>devagar.</em></h1>
+          <p id="copy">A xícara espera. O primeiro fio de café encontra o fundo.</p>
           <div class="counter" id="counter">01 — 04</div>
           <div class="cue">Role para avançar a cena ↓</div>
         </div>
@@ -65,17 +65,17 @@
   </main>
   <script>
     const scenes=[
-      {n:"01",title:"A manhã começa devagar.",copy:"A primeira luz encontra o pão que descansou a noite inteira."},
-      {n:"02",title:"O café pede presença.",copy:"Água quente, grão recém-moído e alguns minutos sem olhar o celular."},
-      {n:"03",title:"O forno dá o sinal.",copy:"Camadas douradas, cheiro bom e o balcão ficando pronto."},
-      {n:"04",title:"Tem lugar para mais um.",copy:"Uma xícara, um pão quentinho e o tempo para sentar."}
+      {n:"01",title:"A xícara espera.",copy:"O primeiro fio escuro começa a desenhar a manhã."},
+      {n:"02",title:"O café encontra o fundo.",copy:"O nível sobe devagar; a crema se abre em volta da xícara."},
+      {n:"03",title:"A mesa já está posta.",copy:"Café servido, croissant ao lado e um instante para olhar de perto."},
+      {n:"04",title:"A manhã ganha companhia.",copy:"Um take curto, um café completo e espaço para começar o dia."}
     ];
     const journey=document.querySelector("#journey"),video=document.querySelector("#storyVideo"),chapters=document.querySelector("#chapters"),reduceMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
     scenes.forEach((scene,i)=>{const article=document.createElement("article");article.innerHTML="<small>"+scene.n+" / CAPÍTULO</small><h2>"+scene.title+"</h2><p>"+scene.copy+"</p>"+(i===3?'<a href="index.html#visite">PASSE PRA UM CAFÉ ↗</a>':"");chapters.append(article)});
-    let raf=0,lastProgress=0;
-    function update(){raf=0;const rect=journey.getBoundingClientRect(),range=Math.max(journey.offsetHeight-innerHeight,1),progress=Math.min(1,Math.max(0,-rect.top/range)),index=Math.min(scenes.length-1,Math.floor(progress*scenes.length));lastProgress=progress;document.querySelector("#kicker").textContent=scenes[index].n+" / CAPÍTULO";document.querySelector("#title").innerHTML=scenes[index].title.replace(/\.(?=\s|$)/,"<em>.</em>");document.querySelector("#copy").textContent=scenes[index].copy;document.querySelector("#counter").textContent=scenes[index].n+" — 04";document.querySelector("#progress").style.transform="scaleX("+progress+")";if(!reduceMotion&&Number.isFinite(video.duration)&&video.duration>0){const target=Math.min(video.duration-.04,progress*video.duration);if(Math.abs(video.currentTime-target)>.12)video.currentTime=target}}
+    let raf=0,lastProgress=0,seekPending=false,activeIndex=-1;
+    function update(){raf=0;const rect=journey.getBoundingClientRect(),range=Math.max(journey.offsetHeight-innerHeight,1),progress=Math.min(1,Math.max(0,-rect.top/range)),index=Math.min(scenes.length-1,Math.floor(progress*scenes.length));lastProgress=progress;if(index!==activeIndex){activeIndex=index;document.querySelector("#kicker").textContent=scenes[index].n+" / CAPÍTULO";document.querySelector("#title").innerHTML=scenes[index].title.replace(/\.(?=\s|$)/,"<em>.</em>");document.querySelector("#copy").textContent=scenes[index].copy;document.querySelector("#counter").textContent=scenes[index].n+" — 04"}document.querySelector("#progress").style.transform="scaleX("+progress+")";if(!reduceMotion&&Number.isFinite(video.duration)&&video.duration>0){const target=Math.min(video.duration-.04,progress*video.duration);if(Math.abs(video.currentTime-target)>.16&&!seekPending){seekPending=true;video.currentTime=target}}}
     function queueUpdate(){if(!raf)raf=requestAnimationFrame(update)}
-    addEventListener("scroll",queueUpdate,{passive:true});addEventListener("resize",queueUpdate);video.addEventListener("loadedmetadata",()=>{if(!reduceMotion)video.currentTime=lastProgress*video.duration});update();
+    addEventListener("scroll",queueUpdate,{passive:true});addEventListener("resize",queueUpdate);video.addEventListener("seeked",()=>{seekPending=false});video.addEventListener("loadedmetadata",()=>{if(!reduceMotion)video.currentTime=lastProgress*video.duration});update();
   </script>
 </body>
 </html>
