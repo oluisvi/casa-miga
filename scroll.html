@@ -16,12 +16,20 @@
     .visual,.visual video,.visual:after{position:absolute;inset:0}
     .visual video{width:100%;height:100%;object-fit:cover;filter:brightness(.74) saturate(.92)}
     .visual:after{content:"";background:linear-gradient(90deg,#241b14d8 0%,#241b1468 49%,#241b1415 100%),linear-gradient(0deg,#241b14a8,transparent 34%)}
-    .hud{position:absolute;z-index:2;inset:0;padding:15vh var(--gutter) 10vh;display:flex;flex-direction:column;justify-content:center;pointer-events:none;transition:opacity .35s ease}
+    .hud{position:absolute;z-index:2;inset:0;padding:15vh var(--gutter) 10vh;display:flex;flex-direction:column;justify-content:center;pointer-events:none}
     .hud small,.counter,.cue{font:10px "DM Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:#fff0df}
     .hud small{color:#edaa6b}
-    .hud h1{font:500 clamp(64px,10vw,140px)/.88 "Playfair Display",serif;letter-spacing:-.05em;max-width:950px;margin:25px 0}
+    .hud h1{font:500 clamp(64px,10vw,140px)/.88 "Playfair Display",serif;letter-spacing:-.05em;max-width:950px;margin:25px 0;color:#f5f0e7;transition:opacity .24s ease,transform .24s ease}
     .hud h1 em{color:#edaa6b;font-weight:500}
-    .hud p{font:15px/1.75 "DM Sans",sans-serif;color:#f1e7d9;max-width:390px;margin:0}
+    .hud h1 .title-accent{color:#edaa6b}
+    .hud h1 .title-rest{color:#f5f0e7}
+    .hud>p:not(.media-status){font:15px/1.75 "DM Sans",sans-serif;color:#f1e7d9;max-width:390px;margin:0;transition:opacity .24s ease,transform .24s ease}
+    .hud.is-changing h1,.hud.is-changing p{opacity:0;transform:translateY(8px)}
+    .hud .media-status{position:absolute;left:var(--gutter);top:calc(100% - 88px);max-width:min(390px,calc(100% - 48px));padding:12px 15px;background:#241b14e8;color:#f1e7d9;font:12px/1.6 "DM Sans",sans-serif;opacity:0;pointer-events:none;transition:opacity .25s}
+    .visual.video-unavailable .media-status{opacity:1}
+    .visual.video-unavailable video{display:none}
+    .visual.video-unavailable:after{background:linear-gradient(90deg,#241b14ed 0%,#241b149e 62%,#241b144c 100%),linear-gradient(0deg,#241b14a8,transparent 34%)}
+    .visual.video-unavailable ~ .hud .cue{display:none}
     .counter,.cue{position:absolute;bottom:38px}
     .counter{left:var(--gutter)}.cue{right:var(--gutter)}
     .progress{position:absolute;z-index:4;top:0;left:0;width:100%;height:3px;background:#e7a36b;transform:scaleX(0);transform-origin:left}
@@ -56,6 +64,7 @@
           <small id="kicker">01 / CAPÍTULO</small>
           <h1 id="title" aria-live="polite">A manhã começa<br /><em>devagar.</em></h1>
           <p id="copy">A xícara espera. O primeiro fio de café encontra o fundo.</p>
+          <p class="media-status" role="status">O take do café não pôde ser carregado. A imagem de abertura continua disponível enquanto você lê os capítulos.</p>
           <div class="counter" id="counter">01 — 04</div>
           <div class="cue">Role para avançar a cena ↓</div>
         </div>
@@ -65,17 +74,20 @@
   </main>
   <script>
     const scenes=[
-      {n:"01",title:"A xícara espera.",copy:"O primeiro fio escuro começa a desenhar a manhã."},
-      {n:"02",title:"O café encontra o fundo.",copy:"O nível sobe devagar; a crema se abre em volta da xícara."},
-      {n:"03",title:"A mesa já está posta.",copy:"Café servido, croissant ao lado e um instante para olhar de perto."},
+      {n:"01",title:"A xícara espera.",accent:"espera.",copy:"A manhã começa com a xícara e o balcão em cena."},
+      {n:"02",title:"O café encontra o fundo.",accent:"fundo.",copy:"Um fio de espresso desce e a crema começa a se abrir."},
+      {n:"03",title:"A mesa já está posta.",accent:"posta.",copy:"Café servido, croissant ao lado e um instante para olhar de perto."},
       {n:"04",title:"A manhã ganha companhia.",copy:"Um take curto, um café completo e espaço para começar o dia."}
     ];
-    const journey=document.querySelector("#journey"),video=document.querySelector("#storyVideo"),chapters=document.querySelector("#chapters"),reduceMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const journey=document.querySelector("#journey"),video=document.querySelector("#storyVideo"),visual=document.querySelector(".visual"),hud=document.querySelector(".hud"),chapters=document.querySelector("#chapters"),reduceMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
     scenes.forEach((scene,i)=>{const article=document.createElement("article");article.innerHTML="<small>"+scene.n+" / CAPÍTULO</small><h2>"+scene.title+"</h2><p>"+scene.copy+"</p>"+(i===3?'<a href="index.html#visite">PASSE PRA UM CAFÉ ↗</a>':"");chapters.append(article)});
-    let raf=0,lastProgress=0,seekPending=false,activeIndex=-1;
-    function update(){raf=0;const rect=journey.getBoundingClientRect(),range=Math.max(journey.offsetHeight-innerHeight,1),progress=Math.min(1,Math.max(0,-rect.top/range)),index=Math.min(scenes.length-1,Math.floor(progress*scenes.length));lastProgress=progress;if(index!==activeIndex){activeIndex=index;document.querySelector("#kicker").textContent=scenes[index].n+" / CAPÍTULO";document.querySelector("#title").innerHTML=scenes[index].title.replace(/\.(?=\s|$)/,"<em>.</em>");document.querySelector("#copy").textContent=scenes[index].copy;document.querySelector("#counter").textContent=scenes[index].n+" — 04"}document.querySelector("#progress").style.transform="scaleX("+progress+")";if(!reduceMotion&&Number.isFinite(video.duration)&&video.duration>0){const target=Math.min(video.duration-.04,progress*video.duration);if(Math.abs(video.currentTime-target)>.16&&!seekPending){seekPending=true;video.currentTime=target}}}
+    let raf=0,lastProgress=0,activeIndex=-1,pendingSeek=null,seekBusy=false,seekWatchdog=0;
+    function paintScene(index){if(index===activeIndex)return;activeIndex=index;hud.classList.add("is-changing");window.setTimeout(()=>{const accent=scenes[index].accent||"",title=scenes[index].title,escaped=accent.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");document.querySelector("#kicker").textContent=scenes[index].n+" / CAPÍTULO";document.querySelector("#title").innerHTML=accent?title.replace(new RegExp(escaped+"$"),'<em class="title-accent">'+accent+'</em>'):'<span class="title-rest">'+title+'</span>';document.querySelector("#copy").textContent=scenes[index].copy;document.querySelector("#counter").textContent=scenes[index].n+" — 04";hud.classList.remove("is-changing")},180)}
+    function requestSeek(target){if(reduceMotion||visual.classList.contains("video-unavailable")||!Number.isFinite(video.duration)||video.duration<=0)return;pendingSeek=Math.max(0,Math.min(video.duration-.04,target));if(!seekBusy)performSeek()}
+    function performSeek(){if(pendingSeek===null||seekBusy)return;const target=pendingSeek;pendingSeek=null;if(Math.abs(video.currentTime-target)<.16)return;seekBusy=true;try{video.currentTime=target}catch{seekBusy=false;return}clearTimeout(seekWatchdog);seekWatchdog=window.setTimeout(()=>{seekBusy=false;performSeek()},180)}
+    function update(){raf=0;const rect=journey.getBoundingClientRect(),range=Math.max(journey.offsetHeight-innerHeight,1),progress=Math.min(1,Math.max(0,-rect.top/range)),index=Math.min(scenes.length-1,Math.floor(progress*scenes.length));lastProgress=progress;paintScene(index);document.querySelector("#progress").style.transform="scaleX("+progress+")";requestSeek(progress*video.duration)}
     function queueUpdate(){if(!raf)raf=requestAnimationFrame(update)}
-    addEventListener("scroll",queueUpdate,{passive:true});addEventListener("resize",queueUpdate);video.addEventListener("seeked",()=>{seekPending=false});video.addEventListener("loadedmetadata",()=>{if(!reduceMotion)video.currentTime=lastProgress*video.duration});update();
+    addEventListener("scroll",queueUpdate,{passive:true});addEventListener("resize",queueUpdate);video.addEventListener("seeked",()=>{clearTimeout(seekWatchdog);seekBusy=false;performSeek()});video.addEventListener("loadedmetadata",()=>{requestSeek(lastProgress*video.duration)});video.addEventListener("error",()=>{visual.classList.add("video-unavailable");video.removeAttribute("src");video.querySelectorAll("source").forEach(source=>source.removeAttribute("src"));document.querySelector("#kicker").textContent="MÍDIA INDISPONÍVEL / PÔSTER";document.querySelector("#title").textContent="Miga continua em cena.";document.querySelector("#copy").textContent="A imagem de abertura permanece como cenário do capítulo.";document.querySelector("#counter").textContent="PÔSTER";document.querySelector("#progress").style.display="none"},{once:true});update();
   </script>
 </body>
 </html>
