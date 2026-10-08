@@ -14,8 +14,8 @@
     .journey{height:400vh;position:relative}
     .sticky{height:100svh;min-height:520px;position:sticky;top:0;overflow:hidden;background:#35291f url("hero-still.png") center/cover no-repeat}
     .visual,.visual video,.visual:after{position:absolute;inset:0}
-    .visual video{width:100%;height:100%;object-fit:cover;filter:brightness(.74) saturate(.92)}
-    .visual:after{content:"";background:linear-gradient(90deg,#241b14d8 0%,#241b1468 49%,#241b1415 100%),linear-gradient(0deg,#241b14a8,transparent 34%)}
+    .visual video{width:100%;height:100%;object-fit:cover;filter:brightness(.53) saturate(.92)}
+    .visual:after{content:"";background:linear-gradient(90deg,#241b14e0 0%,#241b1482 54%,#241b1420 100%),linear-gradient(0deg,#241b14c0,transparent 38%)}
     .hud{position:absolute;z-index:2;inset:0;padding:15vh var(--gutter) 10vh;display:flex;flex-direction:column;justify-content:center;pointer-events:none}
     .hud small,.counter,.cue{font:10px "DM Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:#fff0df}
     .hud small{color:#edaa6b}
@@ -28,7 +28,7 @@
     .hud .media-status{position:absolute;left:var(--gutter);top:calc(100% - 88px);max-width:min(390px,calc(100% - 48px));padding:12px 15px;background:#241b14e8;color:#f1e7d9;font:12px/1.6 "DM Sans",sans-serif;opacity:0;pointer-events:none;transition:opacity .25s}
     .visual.video-unavailable .media-status{opacity:1}
     .visual.video-unavailable video{display:none}
-    .visual.video-unavailable:after{background:linear-gradient(90deg,#241b14ed 0%,#241b149e 62%,#241b144c 100%),linear-gradient(0deg,#241b14a8,transparent 34%)}
+    .visual.video-unavailable:after{background:linear-gradient(90deg,#241b14ed 0%,#241b149e 62%,#241b144c 100%),linear-gradient(0deg,#241b14c0,transparent 38%)}
     .visual.video-unavailable ~ .hud .cue{display:none}
     .counter,.cue{position:absolute;bottom:38px}
     .counter{left:var(--gutter)}.cue{right:var(--gutter)}
