@@ -153,11 +153,15 @@ function initProductCarousel(root) {
   let dragStartScroll = 0;
   let dragging = false;
   let dragged = false;
+  let scrollFrame = 0;
 
   const update = () => {
-    const trackLeft = track.getBoundingClientRect().left;
+    scrollFrame = 0;
+    const trackRect = track.getBoundingClientRect();
+    const trackCenter = trackRect.left + track.clientLeft + track.clientWidth / 2;
     const closest = slides.reduce((best, slide, index) => {
-      const distance = Math.abs(slide.getBoundingClientRect().left - trackLeft);
+      const rect = slide.getBoundingClientRect();
+      const distance = Math.abs(rect.left + rect.width / 2 - trackCenter);
       return distance < best.distance ? { index, distance } : best;
     }, { index: 0, distance: Infinity });
     activeIndex = closest.index;
@@ -167,14 +171,23 @@ function initProductCarousel(root) {
     next.disabled = activeIndex >= slides.length - 1;
   };
 
+  const queueUpdate = () => {
+    if (scrollFrame) return;
+    scrollFrame = window.requestAnimationFrame(update);
+  };
+
   const step = (direction) => {
     const slide = slides[Math.max(0, Math.min(slides.length - 1, activeIndex + direction))];
-    track.scrollTo({ left: slide.offsetLeft - slides[0].offsetLeft, behavior: reduceMotion ? 'auto' : 'smooth' });
+    const trackRect = track.getBoundingClientRect();
+    const slideRect = slide.getBoundingClientRect();
+    const target = track.scrollLeft + slideRect.left - trackRect.left - track.clientLeft
+      - (track.clientWidth - slideRect.width) / 2;
+    track.scrollTo({ left: Math.max(0, target), behavior: reduceMotion ? 'auto' : 'smooth' });
   };
 
   previous.addEventListener('click', () => step(-1));
   next.addEventListener('click', () => step(1));
-  track.addEventListener('scroll', update, { passive: true });
+  track.addEventListener('scroll', queueUpdate, { passive: true });
   track.addEventListener('keydown', (event) => {
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
     event.preventDefault();
@@ -209,7 +222,8 @@ function initProductCarousel(root) {
     event.stopPropagation();
     dragged = false;
   }, true);
-  window.addEventListener('resize', update);
+  window.addEventListener('resize', queueUpdate, { passive: true });
+  if ('ResizeObserver' in window) new ResizeObserver(queueUpdate).observe(track);
   update();
 }
 
