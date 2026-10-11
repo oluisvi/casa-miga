@@ -17,6 +17,36 @@
 @media(prefers-reduced-motion:reduce){.motion-enhanced [data-reveal],.motion-enhanced [data-reveal].is-visible{opacity:1;transform:none;transition:none}.entry-panel,.entry-mark,.entry-phrase,.food-img img,.food-meta,.catalog-progress i,.catalog-arrows button,.food-add{transition:none;animation:none}.food:hover .food-img img,.food:focus-within .food-img img{transform:none}}
 .thematic-entry.is-gone{visibility:hidden}
 
+/* Editorial rhythm: tighter section handoffs while preserving the cinematic hero. */
+.manifesto{padding-block:clamp(88px,8vw,124px)}
+.menu{padding-block:clamp(86px,8vw,112px) clamp(92px,8vw,118px)}
+.menu-head{margin-bottom:clamp(32px,4vw,46px)}
+.story{height:80svh;min-height:600px;max-height:820px}
+.postcard{padding-block:clamp(100px,9vw,128px)}
+.case-note{padding-block:clamp(76px,8vw,122px)}
+.case-note>h2{margin-bottom:clamp(34px,4vw,48px)}
+.visit{padding-block:clamp(82px,7.5vw,104px)}
+.fixed-copy,.postcard,.case-note{position:relative;z-index:1}
+@media(max-width:800px){
+  .manifesto{padding-block:76px}
+  .menu{padding-block:76px 84px}
+  .menu-head{margin-bottom:30px}
+  .story{height:76svh;min-height:560px}
+  .postcard{padding-block:96px}
+  .case-note{padding-block:72px}
+  .visit{padding-block:72px}
+}
+@media(max-width:560px){
+  .manifesto{padding-block:62px}
+  .menu{padding-block:62px 70px}
+  .menu-head{margin-bottom:24px}
+  .story{height:72svh;min-height:520px}
+  .postcard{padding-block:78px}
+  .case-note{padding-block:62px}
+  .case-note>h2{margin-bottom:24px}
+  .visit{padding-block:60px}
+}
+
 /* Casa Miga responsive polish: warm tomato accent, clear type, and reliable mobile rhythm. */
 :root{--accent:#b84425;--accent-hover:#96371e;--orange:var(--accent);--gutter:clamp(20px,6vw,96px)}
 .brand span,.manifesto h2 em,.menu h2 em,.postcard blockquote em,.case-note>h2 em,.case-link span{color:var(--accent)}

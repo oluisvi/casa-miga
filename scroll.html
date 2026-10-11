@@ -11,7 +11,7 @@
     html{scroll-behavior:auto}
     body{background:#35291f;color:#f5f0e7}
     .topbar{position:fixed;z-index:10;background:linear-gradient(#211a14d8,transparent);border:0}
-    .journey{height:400vh;position:relative}
+    .journey{height:340vh;position:relative}
     .sticky{height:100svh;min-height:520px;position:sticky;top:0;overflow:hidden;background:#35291f url("hero-still.png") center/cover no-repeat}
     .visual,.visual video,.visual:after{position:absolute;inset:0}
     .visual video{width:100%;height:100%;object-fit:cover;filter:brightness(.53) saturate(.92)}
@@ -34,15 +34,15 @@
     .counter{left:var(--gutter)}.cue{right:var(--gutter)}
     .progress{position:absolute;z-index:4;top:0;left:0;width:100%;height:3px;background:#e7a36b;transform:scaleX(0);transform-origin:left}
     .chapters{display:none}
-    .chapters article{min-height:70vh;padding:12vh 0;display:flex;flex-direction:column;justify-content:center;max-width:730px;border-bottom:1px solid #27241f24}
+    .chapters article{min-height:56vh;padding:8vh 0;display:flex;flex-direction:column;justify-content:center;max-width:730px;border-bottom:1px solid #27241f24}
     .chapters article:nth-child(even){margin-left:auto;text-align:right;align-items:flex-end}
     .chapters small{font:10px "DM Mono",monospace;letter-spacing:.16em;color:#b06a39}
     .chapters h2{font:500 clamp(47px,7.4vw,94px)/.94 "Playfair Display",serif;letter-spacing:-.04em;margin:22px 0}
     .chapters p{font:15px/1.75 "DM Sans",sans-serif;max-width:430px;color:#615c53}
     .chapters a{margin-top:16px;color:#27241f;font:10px "DM Mono",monospace;letter-spacing:.12em;text-transform:uppercase;border-bottom:1px solid #27241f;padding:12px 0}
     .topbar nav a:focus-visible,.topbar a:focus-visible,.chapters a:focus-visible{outline:2px solid #edaa6b;outline-offset:5px}
-    @media(max-width:650px){.journey{height:400vh}.hud{padding:16vh 24px 9vh}.hud h1{font-size:clamp(59px,14vw,78px)}.hud p{max-width:310px;font-size:14px}.counter,.cue{bottom:25px;font-size:8px}.chapters article{min-height:60vh}.chapters article:nth-child(even){text-align:left;align-items:flex-start}}
-    @media(prefers-reduced-motion:reduce){.journey{height:auto}.sticky{height:100svh;position:relative}.visual video{display:none}.progress{display:none}.cue{display:none}.chapters{display:block;background:#f5f0e7;color:#27241f;padding:5vh var(--gutter) 9vh}.chapters article{min-height:0;padding:9vh 0}}
+    @media(max-width:650px){.journey{height:360vh}.hud{padding:14vh 24px 8vh}.hud h1{font-size:clamp(59px,14vw,78px)}.hud p{max-width:310px;font-size:14px}.counter,.cue{bottom:25px;font-size:8px}.chapters article{min-height:50vh;padding:7vh 0}.chapters article:nth-child(even){text-align:left;align-items:flex-start}}
+    @media(prefers-reduced-motion:reduce){.journey{height:auto}.sticky{height:100svh;position:relative}.visual video{display:none}.progress{display:none}.cue{display:none}.chapters{display:block;background:#f5f0e7;color:#27241f;padding:5vh var(--gutter) 8vh}.chapters article{min-height:0;padding:6vh 0}}
   </style>
 </head>
 <body>
